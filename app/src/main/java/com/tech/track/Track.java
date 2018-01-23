@@ -8,7 +8,15 @@ import android.view.View;
  */
 
 public class Track {
-    public static void track(View view) {
+    public static void trackClick(View view) {
         Log.e("Track########", "view " + view.toString() + " is clicked");
+    }
+
+    public static void trackPageStart(String page) {
+        Log.e("Track########", page + " ====> onPageStart " + System.currentTimeMillis());
+    }
+
+    public static void trackPageStop(String page) {
+        Log.e("Track########", page + " ====> onPageStop " + System.currentTimeMillis());
     }
 }

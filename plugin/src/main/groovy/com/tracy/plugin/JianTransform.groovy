@@ -92,7 +92,6 @@ class JianTransform extends Transform {
                                     def dest = outputProvider.getContentLocation(directoryInput.name,
                                             directoryInput.contentTypes, directoryInput.scopes,
                                             Format.DIRECTORY)
-                                    println("dest is " + dest.getAbsolutePath())
                                     FileUtils.copyDirectory(directoryInput.file, dest)
                                 }
                         }
@@ -193,7 +192,6 @@ class JianTransform extends Transform {
     }
 
     private boolean isFileAvailable(String entryName) {
-        if (entryName.startsWith("Lambda")) return true
         return entryName.endsWith(".class") && !entryName.contains("R\$") && !entryName.contains("R.class") && !entryName.contains("BuildConfig.class")
     }
 
