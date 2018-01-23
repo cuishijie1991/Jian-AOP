@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/tv_normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="normal click" />
+
+
+    <Button
+        android:id="@+id/tv_innerclass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="innerclass click" />
+
+    <Button
+        android:id="@+id/tv_anonymous_innerClass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="anonymous click" />
+
+    <Button
+        android:id="@+id/tv_lambda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lambda click" />
+
+
+</LinearLayout>
