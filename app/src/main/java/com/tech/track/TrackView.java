@@ -66,12 +66,12 @@ public class TrackView {
                 }
             }
             root.getChildAt(i).setTag(KEY_PATH, tag);
-//            if (root.getChildAt(i) instanceof ViewGroup) {
-//                if (root.getChildAt(i).getTag(KEY_GENERATION) == null) {
-//                    root.getChildAt(i).setTag(KEY_GENERATION, 1);
-//                }
-//                setAllTag((ViewGroup) root.getChildAt(i));
-//            }
+            if (root.getChildAt(i) instanceof ViewGroup) {
+                if (root.getChildAt(i).getTag(KEY_GENERATION) == null) {
+                    root.getChildAt(i).setTag(KEY_GENERATION, 1);
+                }
+                setAllTag((ViewGroup) root.getChildAt(i));
+            }
         }
     }
 
