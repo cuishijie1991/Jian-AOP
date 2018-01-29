@@ -1,4 +1,4 @@
-package com.tech.track;
+package com.tracy.slark.utils;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
  * Created by zhaohaiyang on 2018/1/24.
  */
 
-public class TrackView {
+public class TraceUtils {
 
     private static int KEY_GENERATION = 0xff000001;
     private static int KEY_PATH = 0xff000002;

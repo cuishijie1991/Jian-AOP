@@ -19,9 +19,8 @@ public class ClickAdviceAdapter extends AdviceAdapter {
 
     @Override
     protected void onMethodEnter() {
-        System.out.println(className + "==> track click");
         visitVarInsn(Opcodes.ALOAD, 1);
-        visitMethodInsn(Opcodes.INVOKESTATIC, "com/tech/track/Track", "trackClick", "(Landroid/view/View;)V", false);
+        visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackClickEvent", "(Landroid/view/View;)V", false);
         super.onMethodEnter();
     }
 
