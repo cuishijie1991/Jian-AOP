@@ -37,9 +37,7 @@ public class ClickAction implements IAction {
     public ClickAction(View view) {
         this.actTime = System.currentTimeMillis();
         Context context = view.getContext();
-        if (context instanceof Activity) {
-            this.actPage = ((Activity) context).getClass().getSimpleName();
-        }
+        this.actPage = ((Activity) context).getClass().getSimpleName();
         this.viewId = findViewById(context, view.getId());
         this.viewPath = TraceUtils.getPath(view);
         if (view instanceof TextView) {
@@ -71,5 +69,10 @@ public class ClickAction implements IAction {
                 .append("&text=").append(this.text)
                 .append("&actTime=").append(this.actTime);
         return sb.toString();
+    }
+
+    @Override
+    public long getActTime() {
+        return this.actTime;
     }
 }

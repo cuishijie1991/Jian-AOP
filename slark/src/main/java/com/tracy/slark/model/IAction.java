@@ -7,4 +7,6 @@ package com.tracy.slark.model;
 public interface IAction {
 
     String toActionString();
+
+    long getActTime();
 }

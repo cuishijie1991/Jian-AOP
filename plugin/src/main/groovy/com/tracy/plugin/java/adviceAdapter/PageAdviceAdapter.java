@@ -8,11 +8,11 @@ import org.objectweb.asm.commons.AdviceAdapter;
  * Created by shijiecui on 2018/1/23.
  */
 
-public class PageTimeAdviceAdapter extends AdviceAdapter {
+public class PageAdviceAdapter extends AdviceAdapter {
     private String className;
     private String methodName;
 
-    public PageTimeAdviceAdapter(String className, MethodVisitor mv, int access, String name, String desc) {
+    public PageAdviceAdapter(String className, MethodVisitor mv, int access, String name, String desc) {
         super(Opcodes.ASM5, mv, access, name, desc);
         this.className = className;
         this.methodName = name;
@@ -22,8 +22,9 @@ public class PageTimeAdviceAdapter extends AdviceAdapter {
     protected void onMethodEnter() {
         if (methodName.equals("onResume")) {
             System.out.println(className + "==> track Page start");
-            visitLdcInsn(className);
-            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tech/track/Track", "trackPageStart", "(Ljava/lang/String;)V", false);
+            visitVarInsn(Opcodes.ALOAD, 0);
+            visitLdcInsn(true);
+            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
         }
         super.onMethodEnter();
     }
@@ -32,8 +33,9 @@ public class PageTimeAdviceAdapter extends AdviceAdapter {
     protected void onMethodExit(int opcode) {
         if (methodName.equals("onPause")) {
             System.out.println(className + "==> track Page end");
-            visitLdcInsn(className);
-            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tech/track/Track", "trackPageStop", "(Ljava/lang/String;)V", false);
+            visitVarInsn(Opcodes.ALOAD, 0);
+            visitLdcInsn(false);
+            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
         }
         super.onMethodExit(opcode);
     }

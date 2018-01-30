@@ -2,7 +2,7 @@ package com.tracy.plugin.java;
 
 
 import com.tracy.plugin.java.adviceAdapter.ClickAdviceAdapter;
-import com.tracy.plugin.java.adviceAdapter.PageTimeAdviceAdapter;
+import com.tracy.plugin.java.adviceAdapter.PageAdviceAdapter;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -37,7 +37,7 @@ public class SourceMethodClassVisitor extends ClassVisitor {
             methodVisitor = new ClickAdviceAdapter(className, methodVisitor, access, name, desc);
         }
         if (trackPageTime && (name.equals("onResume") || name.equals("onPause"))) {
-            methodVisitor = new PageTimeAdviceAdapter(className, methodVisitor, access, name, desc);
+            methodVisitor = new PageAdviceAdapter(className, methodVisitor, access, name, desc);
         }
         return methodVisitor;
     }

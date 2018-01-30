@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.tracy.slark.Slark;
 
 public class MainActivity extends Activity {
 
@@ -29,10 +28,8 @@ public class MainActivity extends Activity {
         this.findViewById(R.id.tv_anonymous_innerClass).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Slark.trackClickEvent(view);
                 Log.e("track_______", "anonymous innerClass Click is clicked");
             }
-
         });
 
         this.findViewById(R.id.tv_lambda).setOnClickListener(v -> {
