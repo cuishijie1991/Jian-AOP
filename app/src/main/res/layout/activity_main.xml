@@ -4,33 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary_dark_material_light"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
-    <Button
-        android:id="@+id/tv_normal"
-        android:layout_width="wrap_content"
+
+    <ListView
+        android:id="@+id/itemList"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="normal click" />
-
-
-    <Button
-        android:id="@+id/tv_innerclass"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="innerclass click" />
-
-    <Button
-        android:id="@+id/tv_anonymous_innerClass"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="anonymous click" />
-
-    <Button
-        android:id="@+id/tv_lambda"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="lambda click" />
+        android:divider="#ededed"
+        android:dividerHeight="1px" />
 
 
 </LinearLayout>
