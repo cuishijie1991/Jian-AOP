@@ -26,6 +26,8 @@ public class ClickAction implements IAction {
 
     public long actTime;
 
+    public String tag;
+
     public ClickAction(String viewId, String viewPath, String actPage, String text, long actTime) {
         this.viewId = viewId;
         this.viewPath = viewPath;
@@ -67,7 +69,8 @@ public class ClickAction implements IAction {
                 .append("&actPage=").append(this.actPage)
                 .append("&viewPath=").append(this.viewPath)
                 .append("&text=").append(this.text)
-                .append("&actTime=").append(this.actTime);
+                .append("&actTime=").append(this.actTime)
+                .append("&fragment=").append(this.tag);
         return sb.toString();
     }
 

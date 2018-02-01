@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class MainActivity extends Activity {
 
     final Item[] items = new Item[]{
-            new Item("fragments ", FragmentActivity.class),
+            new Item("fragments ", TestFragmentActivity.class),
             new Item("ListView", ListViewActivity.class),
             new Item("RecyclerView", RecyclerViewActivity.class),
             new Item("ViewPager", ViewPagerActivity.class),

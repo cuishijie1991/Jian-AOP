@@ -20,10 +20,23 @@ public class PageAdviceAdapter extends AdviceAdapter {
 
     @Override
     protected void onMethodEnter() {
+        //TODO 区分fragment的生命周期方法
         if (methodName.equals("onResume")) {
             System.out.println(className + "==> track Page start");
             visitVarInsn(Opcodes.ALOAD, 0);
             visitLdcInsn(true);
+            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
+        }
+        if (methodName.equals("setUserVisibleHint")) {
+            System.out.println(className + "==> track Page start");
+            visitVarInsn(Opcodes.ALOAD, 0);
+            visitLdcInsn(true);
+            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
+        }
+        if (methodName.equals("onHiddenChanged")) {
+            System.out.println(className + "==> track Page end");
+            visitVarInsn(Opcodes.ALOAD, 0);
+            visitLdcInsn(false);
             visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
         }
         super.onMethodEnter();
@@ -31,12 +44,21 @@ public class PageAdviceAdapter extends AdviceAdapter {
 
     @Override
     protected void onMethodExit(int opcode) {
+        //TODO 区分fragment的生命周期方法
+//        if (!className.contains("Fragment")) {
+        if (methodName.equals("onResume")) {
+            System.out.println(className + "==> track Page start");
+            visitVarInsn(Opcodes.ALOAD, 0);
+            visitLdcInsn(true);
+            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
+        }
         if (methodName.equals("onPause")) {
             System.out.println(className + "==> track Page end");
             visitVarInsn(Opcodes.ALOAD, 0);
             visitLdcInsn(false);
             visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
         }
+//        }
         super.onMethodExit(opcode);
     }
 }
