@@ -18,7 +18,7 @@
 
         <activity android:name=".activity.TestFragmentActivity" />
         <activity android:name=".activity.ListViewActivity" />
-        <activity android:name=".activity.RecyclerViewActivity" />
+        <activity android:name=".activity.PagerRecyclerViewActivity" />
         <activity android:name=".activity.ViewPagerActivity" />
     </application>
 

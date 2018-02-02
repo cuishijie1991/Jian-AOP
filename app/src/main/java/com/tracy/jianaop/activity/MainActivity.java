@@ -17,8 +17,8 @@ public class MainActivity extends Activity {
 
     final Item[] items = new Item[]{
             new Item("fragments ", TestFragmentActivity.class),
-            new Item("ListView", ListViewActivity.class),
-            new Item("RecyclerView", RecyclerViewActivity.class),
+            new Item("ListView && GridView", ListViewActivity.class),
+            new Item("ViewPager && RecyclerView", PagerRecyclerViewActivity.class),
             new Item("ViewPager", ViewPagerActivity.class),
     };
 
