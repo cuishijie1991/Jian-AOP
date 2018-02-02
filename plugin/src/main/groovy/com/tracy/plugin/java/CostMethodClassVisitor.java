@@ -26,7 +26,7 @@ public class CostMethodClassVisitor extends ClassVisitor {
             boolean inject = false;
 
             private boolean isInject() {
-               /* if(name.equals("setStartTime") || name.equals("setEndTime") || name.equals("getCostTime")){
+               /* if(type.equals("setStartTime") || type.equals("setEndTime") || type.equals("getCostTime")){
                    return false;
                 }
                 return true;*/
@@ -60,11 +60,11 @@ public class CostMethodClassVisitor extends ClassVisitor {
                 if (isInject()) {
 
                     //mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-                    //mv.visitLdcInsn("========start========="+name+"==>des:"+desc);
+                    //mv.visitLdcInsn("========start========="+type+"==>des:"+desc);
                     //mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println",
                     //      "(Ljava/lang/String;)V", false);
 
-//                    mv.visitLdcInsn(className + ":" + name + desc);
+//                    mv.visitLdcInsn(className + ":" + type + desc);
 //                    mv.visitMethodInsn(INVOKESTATIC, "java/lang/System", "nanoTime", "()J", false);
 //                    mv.visitMethodInsn(INVOKESTATIC, "com/meiyou/meetyoucost/CostLog", "setStartTime",
 //                            "(Ljava/lang/String;J)V", false);
@@ -75,13 +75,13 @@ public class CostMethodClassVisitor extends ClassVisitor {
             protected void onMethodExit(int i) {
                 //super.onMethodExit(i);
                 if (isInject()) {
-//                    mv.visitLdcInsn(className + ":" + name + desc);
+//                    mv.visitLdcInsn(className + ":" + type + desc);
 //                    mv.visitMethodInsn(INVOKESTATIC, "java/lang/System", "nanoTime", "()J", false);
 //                    mv.visitMethodInsn(INVOKESTATIC, "com/meiyou/meetyoucost/CostLog", "setEndTime",
 //                            "(Ljava/lang/String;J)V", false);
 
                     /*mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-                    mv.visitLdcInsn(className+":"+name+desc);
+                    mv.visitLdcInsn(className+":"+type+desc);
                     mv.visitMethodInsn(INVOKESTATIC, "com/meiyou/meetyoucost/CostLog", "getCostTime",
                             "(Ljava/lang/String;)Ljava/lang/String;", false);
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println",

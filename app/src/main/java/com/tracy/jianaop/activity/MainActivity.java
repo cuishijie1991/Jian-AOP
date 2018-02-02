@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 public class MainActivity extends Activity {
 
+    final int autoJumpIndex = -1;
+
     final Item[] items = new Item[]{
             new Item("fragments ", TestFragmentActivity.class),
             new Item("ListView", ListViewActivity.class),
@@ -30,6 +32,10 @@ public class MainActivity extends Activity {
         itemListView.setOnItemClickListener((parent, view, position, id) -> {
             startActivity(new Intent(MainActivity.this, items[position].Activity));
         });
+
+        if (autoJumpIndex >= 0 && autoJumpIndex < items.length) {
+            itemListView.performItemClick(itemListView, autoJumpIndex, autoJumpIndex);
+        }
     }
 
     class Item {

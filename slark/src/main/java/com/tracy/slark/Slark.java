@@ -1,6 +1,5 @@
 package com.tracy.slark;
 
-import android.content.Context;
 import android.view.View;
 
 import com.tracy.slark.model.ClickAction;
@@ -12,14 +11,24 @@ import com.tracy.slark.model.PageAction;
 
 public final class Slark {
 
+    /**
+     * track click events
+     *
+     * @param view
+     */
     public final static void trackClickEvent(View view) {
         if (view != null) {
             SlarkAgent.addAction(new ClickAction(view));
         }
     }
 
-    public final static void trackPageEvent(Context context, boolean pageStart) {
-        SlarkAgent.addAction(new PageAction(context, pageStart));
+
+    /**
+     * @param pageRef   this (Activity or Fragment)
+     * @param pageStart
+     */
+    public final static void trackPageEvent(Object pageRef, boolean pageStart) {
+        SlarkAgent.addAction(new PageAction(pageRef, pageStart));
     }
 
 }

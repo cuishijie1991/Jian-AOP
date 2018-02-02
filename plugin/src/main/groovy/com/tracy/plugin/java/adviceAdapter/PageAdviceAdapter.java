@@ -1,5 +1,7 @@
 package com.tracy.plugin.java.adviceAdapter;
 
+import com.tracy.plugin.java.InjectPage;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AdviceAdapter;
@@ -11,54 +13,58 @@ import org.objectweb.asm.commons.AdviceAdapter;
 public class PageAdviceAdapter extends AdviceAdapter {
     private String className;
     private String methodName;
+    private InjectPage pageType;
 
-    public PageAdviceAdapter(String className, MethodVisitor mv, int access, String name, String desc) {
+    public PageAdviceAdapter(String className, InjectPage pageType, MethodVisitor mv, int access, String name, String desc) {
         super(Opcodes.ASM5, mv, access, name, desc);
         this.className = className;
+        this.pageType = pageType;
         this.methodName = name;
     }
 
     @Override
     protected void onMethodEnter() {
-        //TODO 区分fragment的生命周期方法
-        if (methodName.equals("onResume")) {
-            System.out.println(className + "==> track Page start");
-            visitVarInsn(Opcodes.ALOAD, 0);
-            visitLdcInsn(true);
-            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
-        }
-        if (methodName.equals("setUserVisibleHint")) {
-            System.out.println(className + "==> track Page start");
-            visitVarInsn(Opcodes.ALOAD, 0);
-            visitLdcInsn(true);
-            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
-        }
-        if (methodName.equals("onHiddenChanged")) {
-            System.out.println(className + "==> track Page end");
-            visitVarInsn(Opcodes.ALOAD, 0);
-            visitLdcInsn(false);
-            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
+        if (pageType == InjectPage.ACTIVITY) {
+            insertActivity();
+        } else if (pageType == InjectPage.FRAGMENT) {
+            insertFragment();
         }
         super.onMethodEnter();
     }
 
-    @Override
-    protected void onMethodExit(int opcode) {
-        //TODO 区分fragment的生命周期方法
-//        if (!className.contains("Fragment")) {
+    private void insertActivity() {
         if (methodName.equals("onResume")) {
-            System.out.println(className + "==> track Page start");
-            visitVarInsn(Opcodes.ALOAD, 0);
-            visitLdcInsn(true);
-            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
+            insertPageStart();
         }
         if (methodName.equals("onPause")) {
-            System.out.println(className + "==> track Page end");
-            visitVarInsn(Opcodes.ALOAD, 0);
-            visitLdcInsn(false);
-            visitMethodInsn(Opcodes.INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Landroid/content/Context;Z)V", false);
+            insertPageEnd();
         }
-//        }
-        super.onMethodExit(opcode);
+    }
+
+    private void insertFragment() {
+        if (methodName.equals("onResume")) {
+            insertPageStart();
+        }
+        if (methodName.equals("onPause")) {
+            insertPageEnd();
+        }
+        if (methodName.equals("setUserVisibleHint")) {
+            insertPageStart();
+        }
+        if (methodName.equals("onHiddenChanged")) {
+            insertPageEnd();
+        }
+    }
+
+    private void insertPageStart() {
+        visitVarInsn(ALOAD, 0);
+        visitLdcInsn(true);
+        visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Ljava/lang/Object;Z)V", false);
+    }
+
+    private void insertPageEnd() {
+        visitVarInsn(ALOAD, 0);
+        visitLdcInsn(false);
+        visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Ljava/lang/Object;Z)V", false);
     }
 }

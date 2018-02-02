@@ -31,8 +31,9 @@ import static org.objectweb.asm.ClassReader.EXPAND_FRAMES
 class JianTransform extends Transform {
     Project project
 
-    public JianTransform(Project project) {
+    JianTransform(Project project) {
         this.project = project
+        SlarkSettings.setProject(project)
     }
 
     @Override
@@ -76,21 +77,23 @@ class JianTransform extends Transform {
         //遍历input里边的DirectoryInput
         input.directoryInputs.each {
             DirectoryInput directoryInput ->
-                if (directoryInput.file.isDirectory()) {
-                    directoryInput.file.eachFileRecurse {
-                        File file ->
-                            def name = file.name
-                            if (isFileAvailable(name)) {
-                                ClassReader classReader = new ClassReader(file.bytes)
-                                ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
-                                def className = name.split(".class")[0]
-                                ClassVisitor cv = new SourceMethodClassVisitor(className, classWriter)
-                                classReader.accept(cv, EXPAND_FRAMES)
-                                byte[] code = classWriter.toByteArray()
-                                FileOutputStream fos = new FileOutputStream(file.parentFile.absolutePath + File.separator + name)
-                                fos.write(code)
-                                fos.close()
-                            }
+                if (SlarkSettings.isEnabled()) {
+                    if (directoryInput.file.isDirectory()) {
+                        directoryInput.file.eachFileRecurse {
+                            File file ->
+                                def name = file.name
+                                if (isFileAvailable(name)) {
+                                    ClassReader classReader = new ClassReader(file.bytes)
+                                    ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
+                                    def className = name.split(".class")[0]
+                                    ClassVisitor cv = new SourceMethodClassVisitor(className, classWriter)
+                                    classReader.accept(cv, EXPAND_FRAMES)
+                                    byte[] code = classWriter.toByteArray()
+                                    FileOutputStream fos = new FileOutputStream(file.parentFile.absolutePath + File.separator + name)
+                                    fos.write(code)
+                                    fos.close()
+                                }
+                        }
                     }
                 }
                 //处理完输入文件之后，要把输出给下一个任务
@@ -113,68 +116,70 @@ class JianTransform extends Transform {
             }
 
             File tmpFile = null
-            if (jarInput.file.getAbsolutePath().endsWith(".jar")) {
-                JarFile jarFile = new JarFile(jarInput.file)
-                Enumeration enumeration = jarFile.entries()
-                tmpFile = new File(jarInput.file.getParent() + File.separator + "classes_meetyoucost.jar")
-                //避免上次的缓存被重复插入
-                if (tmpFile.exists()) {
-                    tmpFile.delete()
-                }
-                JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(tmpFile))
-                //用于保存
-                ArrayList<String> processorList = new ArrayList<>()
-                while (enumeration.hasMoreElements()) {
-                    JarEntry jarEntry = (JarEntry) enumeration.nextElement()
-                    String entryName = jarEntry.getName()
-                    ZipEntry zipEntry = new ZipEntry(entryName)
-                    //println "MeetyouCost entryName :" + entryName
-                    InputStream inputStream = jarFile.getInputStream(jarEntry)
-                    //如果是inject文件就跳过
+            if (SlarkSettings.isEnabled()) {
+                if (jarInput.file.getAbsolutePath().endsWith(".jar")) {
+                    JarFile jarFile = new JarFile(jarInput.file)
+                    Enumeration enumeration = jarFile.entries()
+                    tmpFile = new File(jarInput.file.getParent() + File.separator + "classes_meetyoucost.jar")
+                    //避免上次的缓存被重复插入
+                    if (tmpFile.exists()) {
+                        tmpFile.delete()
+                    }
+                    JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(tmpFile))
+                    //用于保存
+                    ArrayList<String> processorList = new ArrayList<>()
+                    while (enumeration.hasMoreElements()) {
+                        JarEntry jarEntry = (JarEntry) enumeration.nextElement()
+                        String entryName = jarEntry.getName()
+                        ZipEntry zipEntry = new ZipEntry(entryName)
+                        //println "MeetyouCost entryName :" + entryName
+                        InputStream inputStream = jarFile.getInputStream(jarEntry)
+                        //如果是inject文件就跳过
 
-                    //插桩class
-                    if (entryName.endsWith(".class") && !entryName.contains("R\$") &&
-                            !entryName.contains("R.class") && !entryName.contains("BuildConfig.class")) {
-                        //class文件处理
-                        jarOutputStream.putNextEntry(zipEntry)
-                        ClassReader classReader = new ClassReader(IOUtils.toByteArray(inputStream))
-                        ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
-                        def className = name.split(".class")[0]
-                        ClassVisitor cv = new CostMethodClassVisitor(className, classWriter)
-                        classReader.accept(cv, EXPAND_FRAMES)
-                        byte[] code = classWriter.toByteArray()
-                        jarOutputStream.write(code)
+                        //插桩class
+                        if (entryName.endsWith(".class") && !entryName.contains("R\$") &&
+                                !entryName.contains("R.class") && !entryName.contains("BuildConfig.class")) {
+                            //class文件处理
+                            jarOutputStream.putNextEntry(zipEntry)
+                            ClassReader classReader = new ClassReader(IOUtils.toByteArray(inputStream))
+                            ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
+                            def className = name.split(".class")[0]
+                            ClassVisitor cv = new CostMethodClassVisitor(className, classWriter)
+                            classReader.accept(cv, EXPAND_FRAMES)
+                            byte[] code = classWriter.toByteArray()
+                            jarOutputStream.write(code)
 
-                    } else if (entryName.contains("META-INF/services/javax.annotation.processing.Processor")) {
-                        if (!processorList.contains(entryName)) {
-                            processorList.add(entryName)
+                        } else if (entryName.contains("META-INF/services/javax.annotation.processing.Processor")) {
+                            if (!processorList.contains(entryName)) {
+                                processorList.add(entryName)
+                                jarOutputStream.putNextEntry(zipEntry)
+                                jarOutputStream.write(IOUtils.toByteArray(inputStream))
+                            } else {
+                                println "duplicate entry:" + entryName
+                            }
+                        } else {
+
                             jarOutputStream.putNextEntry(zipEntry)
                             jarOutputStream.write(IOUtils.toByteArray(inputStream))
-                        } else {
-                            println "duplicate entry:" + entryName
                         }
-                    } else {
 
-                        jarOutputStream.putNextEntry(zipEntry)
-                        jarOutputStream.write(IOUtils.toByteArray(inputStream))
+                        jarOutputStream.closeEntry()
                     }
+                    //写入inject注解
 
-                    jarOutputStream.closeEntry()
-                }
-                //写入inject注解
-
-                //写入inject文件
+                    //写入inject文件
 //                    ZipEntry addEntry = new ZipEntry(injectClazz + ".class")
 //                    jarOutputStream.putNextEntry(addEntry)
 //                    jarOutputStream.write(annaInjectWriter.inject(injectClazz,false))
 //                    jarOutputStream.closeEntry()
 //
 //                    clazzindex++
-                //结束
-                jarOutputStream.close()
-                jarFile.close()
+                    //结束
+                    jarOutputStream.close()
+                    jarFile.close()
 //                    jarInput.file.delete()
 //                    tmpFile.renameTo(jarInput.file)
+                }
             }
 //                println 'Assassin-----> find Jar:' + jarInput.getFile().getAbsolutePath()
 
