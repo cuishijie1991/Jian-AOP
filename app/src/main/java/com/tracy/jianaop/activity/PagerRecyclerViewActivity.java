@@ -75,6 +75,12 @@ public class PagerRecyclerViewActivity extends Activity {
             checkBox.setChecked(listItem.selected);
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> Toast.makeText(mContext, "checkBox is Clicked!", Toast.LENGTH_SHORT).show());
             imageView.setOnClickListener(v -> Toast.makeText(mContext, "image is Clicked!", Toast.LENGTH_SHORT).show());
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
             container.addView(convertView);
             return convertView;
         }

@@ -9,8 +9,8 @@ import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformException
 import com.android.build.api.transform.TransformInput
 import com.android.build.api.transform.TransformOutputProvider
-import com.tracy.plugin.java.CostMethodClassVisitor
-import com.tracy.plugin.java.SourceMethodClassVisitor
+import com.tracy.plugin.visitor.JarMethodClassVisitor
+import com.tracy.plugin.visitor.SourceMethodClassVisitor
 
 import com.android.build.gradle.internal.pipeline.TransformManager
 import org.apache.commons.codec.digest.DigestUtils
@@ -144,7 +144,7 @@ class JianTransform extends Transform {
                             ClassReader classReader = new ClassReader(IOUtils.toByteArray(inputStream))
                             ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                             def className = name.split(".class")[0]
-                            ClassVisitor cv = new CostMethodClassVisitor(className, classWriter)
+                            ClassVisitor cv = new JarMethodClassVisitor(className, classWriter)
                             classReader.accept(cv, EXPAND_FRAMES)
                             byte[] code = classWriter.toByteArray()
                             jarOutputStream.write(code)

@@ -19,7 +19,6 @@ public class MainActivity extends Activity {
             new Item("fragments ", TestFragmentActivity.class),
             new Item("ListView && GridView", ListViewActivity.class),
             new Item("ViewPager && RecyclerView", PagerRecyclerViewActivity.class),
-            new Item("ViewPager", ViewPagerActivity.class),
     };
 
     @Override

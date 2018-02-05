@@ -5,5 +5,8 @@ package com.tracy.slark.utils;
  */
 
 public class Constant {
+
     public static final String UNKNOWN = "unknown";
+
+    public static boolean isDebug = false;
 }
