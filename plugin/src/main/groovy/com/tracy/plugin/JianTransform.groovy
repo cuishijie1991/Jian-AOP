@@ -1,18 +1,9 @@
 package com.tracy.plugin
 
-import com.android.build.api.transform.Context
-import com.android.build.api.transform.DirectoryInput
-import com.android.build.api.transform.Format
-import com.android.build.api.transform.JarInput
-import com.android.build.api.transform.QualifiedContent
-import com.android.build.api.transform.Transform
-import com.android.build.api.transform.TransformException
-import com.android.build.api.transform.TransformInput
-import com.android.build.api.transform.TransformOutputProvider
+import com.android.build.api.transform.*
+import com.android.build.gradle.internal.pipeline.TransformManager
 import com.tracy.plugin.visitor.JarMethodClassVisitor
 import com.tracy.plugin.visitor.SourceMethodClassVisitor
-
-import com.android.build.gradle.internal.pipeline.TransformManager
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
@@ -20,6 +11,7 @@ import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.MethodVisitor
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -27,6 +19,7 @@ import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 
 import static org.objectweb.asm.ClassReader.EXPAND_FRAMES
+import static org.objectweb.asm.Opcodes.*
 
 class JianTransform extends Transform {
     Project project
@@ -86,8 +79,19 @@ class JianTransform extends Transform {
                                     ClassReader classReader = new ClassReader(file.bytes)
                                     ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                                     def className = name.split(".class")[0]
-                                    ClassVisitor cv = new SourceMethodClassVisitor(className, classWriter)
+                                    SourceMethodClassVisitor cv = new SourceMethodClassVisitor(className, classWriter)
                                     classReader.accept(cv, EXPAND_FRAMES)
+//                                    checkMethod(cv, classWriter);
+                                    if (cv.addMNames.size() > 0) {
+                                        for (int i = 0; i < cv.addMNames.size(); i++) {
+                                            System.out.println(cv.addMNames.get(i));
+                                            if (cv.addMNames.get(i).equals("onResume") || cv.addMNames.get(i).equals("onPause")) {
+                                                addNoParamsMethod(classWriter, cv.addMNames.get(i));
+                                            } else {
+                                                addParamsMethod(classWriter, cv.addMNames.get(i))
+                                            }
+                                        }
+                                    }
                                     byte[] code = classWriter.toByteArray()
                                     FileOutputStream fos = new FileOutputStream(file.parentFile.absolutePath + File.separator + name)
                                     fos.write(code)
@@ -141,11 +145,15 @@ class JianTransform extends Transform {
                                 !entryName.contains("R.class") && !entryName.contains("BuildConfig.class")) {
                             //class文件处理
                             jarOutputStream.putNextEntry(zipEntry)
+
+
                             ClassReader classReader = new ClassReader(IOUtils.toByteArray(inputStream))
                             ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                             def className = name.split(".class")[0]
                             ClassVisitor cv = new JarMethodClassVisitor(className, classWriter)
                             classReader.accept(cv, EXPAND_FRAMES)
+
+
                             byte[] code = classWriter.toByteArray()
                             jarOutputStream.write(code)
 
@@ -198,6 +206,51 @@ class JianTransform extends Transform {
 
     private boolean isFileAvailable(String entryName) {
         return entryName.endsWith(".class") && !entryName.contains("R\$") && !entryName.contains("R.class") && !entryName.contains("BuildConfig.class")
+    }
+
+    private void addNoParamsMethod(ClassWriter cw, String name) {
+        // 创建一个 MethodWriter
+        MethodVisitor mw = cw.visitMethod(
+                ACC_PUBLIC, name, "()V", null, null);
+//        mw.visitFieldInsn(
+//                GETSTATIC, "android/support/v4/app/Fragment", name, "()V");
+        // 推入 'this' 变量
+        mw.visitVarInsn(ALOAD, 0);
+        //  创建父类的构造函数
+        mw.visitLdcInsn(true);
+        mw.visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Ljava/lang/Object;Z)V");
+        mw.visitVarInsn(ALOAD, 0);
+        mw.visitMethodInsn(INVOKESPECIAL, "android/support/v4/app/Fragment", name, "()V", false);
+//        mw.visitInsn(RETURN);
+//        mw.visitFieldInsn(
+//                GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        // pushes the "Hello World!" String constant
+//        mw.visitLdcInsn("Hello world!");
+//        // 调用System.out的'println' 函数
+//        mw.visitMethodInsn(
+//                INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V");
+        mw.visitInsn(RETURN);
+        // 这段代码使用最多一个栈元素和一个本地变量
+        mw.visitMaxs(5, 5);
+    }
+
+    private void addParamsMethod(ClassWriter cw, String name) {
+        MethodVisitor mw = cw.visitMethod(
+                ACC_PUBLIC, name, "(Ljava/lang/boolean;)V", null, null);
+        // 使用System类的out成员类
+        mw.visitFieldInsn(
+                GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        // pushes the "Hello World!" String constant
+        mw.visitLdcInsn("Hello world!");
+        // 调用System.out的'println' 函数
+        mw.visitMethodInsn(
+                INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V");
+        mw.visitVarInsn(ALOAD, 0);
+        mw.visitVarInsn(ALOAD, 1);
+        mw.visitMethodInsn(INVOKESPECIAL, "android/support/v4/app/Fragment", name, "(Ljava/lang/boolean;)V", false);
+        mw.visitInsn(RETURN);
+        // 这段代码使用最多两个栈元素和两个本地变量
+        mw.visitMaxs(5, 5);
     }
 
 }

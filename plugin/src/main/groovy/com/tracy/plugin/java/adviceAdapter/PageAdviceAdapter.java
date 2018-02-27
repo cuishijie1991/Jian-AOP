@@ -57,13 +57,13 @@ public class PageAdviceAdapter extends AdviceAdapter {
     }
 
     private void insertPageStart() {
-        visitVarInsn(ALOAD, 0);
+        visitVarInsn(ALOAD, 1);
         visitLdcInsn(true);
         visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Ljava/lang/Object;Z)V", false);
     }
 
     private void insertPageEnd() {
-        visitVarInsn(ALOAD, 0);
+        visitVarInsn(ALOAD, 1);
         visitLdcInsn(false);
         visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Ljava/lang/Object;Z)V", false);
     }

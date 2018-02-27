@@ -1,7 +1,6 @@
 package com.tracy.plugin.visitor;
 
 
-import com.android.ddmlib.Log;
 import com.tracy.plugin.SlarkSettings;
 import com.tracy.plugin.visitor.adapter.ApplicationAdapter;
 import com.tracy.plugin.visitor.adapter.ClickAdapter;
@@ -11,10 +10,12 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.ArrayList;
+
 import static com.tracy.plugin.visitor.InjectMethod.ON_CLICK;
+import static com.tracy.plugin.visitor.InjectMethod.ON_CREATE;
 import static com.tracy.plugin.visitor.InjectMethod.ON_HIDDEN_CHANGED;
 import static com.tracy.plugin.visitor.InjectMethod.ON_ITEM_CLICK;
-import static com.tracy.plugin.visitor.InjectMethod.ON_CREATE;
 import static com.tracy.plugin.visitor.InjectMethod.ON_PAUSE;
 import static com.tracy.plugin.visitor.InjectMethod.ON_RESUME;
 import static com.tracy.plugin.visitor.InjectMethod.SET_USER_VISIBLE_HINT;
@@ -32,6 +33,8 @@ public class SourceMethodClassVisitor extends ClassVisitor implements Opcodes {
     private boolean trackClick = true;
     private boolean trackPage = true;
     private InjectPage pageType = OTHER;
+    private ArrayList<String> methodNames = new ArrayList<>();
+    public ArrayList<String> addMNames = new ArrayList<>();
 
     public SourceMethodClassVisitor(String _className, ClassVisitor cv) {
         super(ASM5, cv);
@@ -84,6 +87,9 @@ public class SourceMethodClassVisitor extends ClassVisitor implements Opcodes {
                 }
             }
             if (trackPage) {
+                if (pageType == FRAGMENT) {
+                    methodNames.add(name);
+                }
                 InjectMethod iMethod = null;
                 if (ON_RESUME.match(name, access, desc)) {
                     iMethod = ON_RESUME;
@@ -100,6 +106,25 @@ public class SourceMethodClassVisitor extends ClassVisitor implements Opcodes {
             }
         }
         return methodVisitor;
+    }
+
+    @Override
+    public void visitEnd() {
+        super.visitEnd();
+        if (pageType == FRAGMENT) {
+            if (!methodNames.contains("onResume")) {
+                addMNames.add("onResume");
+            }
+            if (!methodNames.contains("onPause")) {
+                addMNames.add("onPause");
+            }
+            if (!methodNames.contains("setUserVisibleHint")) {
+                addMNames.add("setUserVisibleHint");
+            }
+            if (!methodNames.contains("onHiddenChanged")) {
+                addMNames.add("onHiddenChanged");
+            }
+        }
     }
 }
 
