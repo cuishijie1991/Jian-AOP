@@ -1,6 +1,5 @@
-package com.tracy.slark.model;
+package com.tracy.slark.model.action;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
@@ -8,7 +7,7 @@ import android.widget.TextView;
 import com.tracy.slark.utils.ResUtils;
 import com.tracy.slark.utils.TraceUtils;
 
-import static com.tracy.slark.utils.Constant.UNKNOWN;
+import static com.tracy.slark.model.Constant.UNKNOWN;
 
 /**
  * Created by cuishijie on 2018/1/28.
@@ -26,8 +25,6 @@ public class ClickAction implements IAction {
 
     public long actTime;
 
-    public String tag;
-
     public ClickAction(String viewId, String viewPath, String actPage, String text, long actTime) {
         this.viewId = viewId;
         this.viewPath = viewPath;
@@ -39,7 +36,7 @@ public class ClickAction implements IAction {
     public ClickAction(View view) {
         this.actTime = System.currentTimeMillis();
         Context context = view.getContext();
-        this.actPage = ((Activity) context).getClass().getSimpleName();
+        this.actPage = context.getClass().getSimpleName();
         this.viewId = findViewById(context, view.getId());
         this.viewPath = TraceUtils.getPath(view);
         if (view instanceof TextView) {
@@ -63,19 +60,23 @@ public class ClickAction implements IAction {
     }
 
     @Override
-    public String toActionString() {
+    public String toActString() {
         StringBuilder sb = new StringBuilder();
         sb.append("viewId=").append(this.viewId)
                 .append("&actPage=").append(this.actPage)
                 .append("&viewPath=").append(this.viewPath)
                 .append("&text=").append(this.text)
-                .append("&actTime=").append(this.actTime)
-                .append("&fragment=").append(this.tag);
+                .append("&actTime=").append(this.actTime);
         return sb.toString();
     }
 
     @Override
     public long getActTime() {
         return this.actTime;
+    }
+
+    @Override
+    public int getActType() {
+        return ActionType.CLICK;
     }
 }

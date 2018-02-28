@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -66,9 +65,9 @@ public class PagerRecyclerViewActivity extends Activity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             View convertView = mInflater.inflate(R.layout.list_item, container, false);
-            ImageView imageView = convertView.findViewById(R.id.image);
+            ImageView imageView = convertView.findViewById(R.id.big_image);
             TextView name = convertView.findViewById(R.id.name);
-            CheckBox checkBox = convertView.findViewById(R.id.checkBox);
+            CheckBox checkBox = convertView.findViewById(R.id.check_box);
             ListItem listItem = listItemList.get(position);
             Picasso.with(mContext).load(listItem.image).fit().centerCrop().into(imageView);
             name.setText(listItem.name);
@@ -128,9 +127,9 @@ public class PagerRecyclerViewActivity extends Activity {
 
             public Holder(View convertView) {
                 super(convertView);
-                imageView = convertView.findViewById(R.id.image);
+                imageView = convertView.findViewById(R.id.big_image);
                 name = convertView.findViewById(R.id.name);
-                checkBox = convertView.findViewById(R.id.checkBox);
+                checkBox = convertView.findViewById(R.id.check_box);
             }
         }
     }

@@ -2,6 +2,8 @@ package com.tracy.slark.utils;
 
 import android.util.Log;
 
+import com.tracy.slark.model.Constant;
+
 /**
  * Created by shijiecui on 2018/2/5.
  */

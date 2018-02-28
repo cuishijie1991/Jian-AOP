@@ -12,13 +12,13 @@ import java.util.Date;
  * Created by shijiecui on 2018/2/5.
  */
 
-public class FileManager {
-    private static FileManager instance;
+public class FileHelper {
+    private static FileHelper instance;
     private final File logDir;
     private SimpleDateFormat mDateFormat;
     private SimpleDateFormat mTimeFormat;
 
-    private FileManager() {
+    private FileHelper() {
         File sdCardDir = Environment.getExternalStorageDirectory().getAbsoluteFile();
         String dir = sdCardDir.getPath() + "/Slark";
         this.logDir = new File(dir);
@@ -26,9 +26,9 @@ public class FileManager {
         mTimeFormat = new SimpleDateFormat("hh-mm-ss");
     }
 
-    public static synchronized FileManager getInstance() {
+    public static synchronized FileHelper getInstance() {
         if (instance == null) {
-            instance = new FileManager();
+            instance = new FileHelper();
         }
         return instance;
     }

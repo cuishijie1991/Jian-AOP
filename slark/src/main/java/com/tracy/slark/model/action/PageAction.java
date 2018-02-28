@@ -1,4 +1,4 @@
-package com.tracy.slark.model;
+package com.tracy.slark.model.action;
 
 import android.content.Context;
 import android.os.Build;
@@ -47,7 +47,7 @@ public class PageAction implements IAction {
     }
 
     @Override
-    public String toActionString() {
+    public String toActString() {
         StringBuilder sb = new StringBuilder();
         sb.append("actPage=").append(this.actPage)
                 .append("&PageStart=").append(this.pageStart)
@@ -58,5 +58,10 @@ public class PageAction implements IAction {
     @Override
     public long getActTime() {
         return this.actTime;
+    }
+
+    @Override
+    public int getActType() {
+        return ActionType.PAGE;
     }
 }

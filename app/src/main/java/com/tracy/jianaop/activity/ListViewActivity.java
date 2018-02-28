@@ -74,9 +74,9 @@ public class ListViewActivity extends Activity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ListItem listItem = getItem(position);
             convertView = mInflater.inflate(R.layout.list_item, null);
-            ImageView imageView = convertView.findViewById(R.id.image);
+            ImageView imageView = convertView.findViewById(R.id.big_image);
             TextView name = convertView.findViewById(R.id.name);
-            CheckBox checkBox = convertView.findViewById(R.id.checkBox);
+            CheckBox checkBox = convertView.findViewById(R.id.check_box);
             Picasso.with(mContext).load(listItem.image).fit().centerCrop().into(imageView);
             name.setText(listItem.name);
             checkBox.setChecked(listItem.selected);

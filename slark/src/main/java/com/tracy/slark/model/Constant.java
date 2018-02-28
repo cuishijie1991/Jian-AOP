@@ -1,4 +1,4 @@
-package com.tracy.slark.utils;
+package com.tracy.slark.model;
 
 /**
  * Created by cuishijie on 2018/1/28.

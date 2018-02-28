@@ -1,4 +1,4 @@
-package com.tracy.slark.model;
+package com.tracy.slark.model.action;
 
 /**
  * Created by cuishijie on 2018/1/28.
@@ -6,7 +6,9 @@ package com.tracy.slark.model;
 
 public interface IAction {
 
-    String toActionString();
+    String toActString();
 
     long getActTime();
+
+    int getActType();
 }

@@ -1,10 +1,12 @@
 package com.tracy.plugin
+
 import org.gradle.api.Project
 
 class SlarkSettings {
     static class SlarkOptions {
         def enabled = true
         boolean debug
+        List<String> injectPackages = []
     }
 
     static class TrackOptions {
@@ -28,6 +30,16 @@ class SlarkSettings {
         return project.slark.debug
     }
 
+    static List<String> getInjectPackages() {
+        List<String> injectPackages = []
+        for (String packageName : project.slark.injectPackages) {
+            if (packageName != null && packageName.length() > 0) {
+                injectPackages.add(packageName.replace('.', '/'))
+            }
+        }
+        return injectPackages
+    }
+
     static boolean isTrackClick() {
         return project.slark.track.click
     }
@@ -35,4 +47,5 @@ class SlarkSettings {
     static boolean isTrackPage() {
         return project.slark.track.page
     }
+
 }

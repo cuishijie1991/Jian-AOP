@@ -19,7 +19,7 @@ public class ApplicationAdapter extends BaseMethodAdapter {
     protected void onMethodEnter() {
         super.onMethodEnter();
         visitLdcInsn(SlarkSettings.isDebug());
-        visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "initConfig", "(Z)V", false);
+        visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "setDebug", "(Z)V", false);
     }
 
     @Override
