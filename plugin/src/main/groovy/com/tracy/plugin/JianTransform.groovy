@@ -142,6 +142,7 @@ class JianTransform extends Transform {
                             def className = name.split(".class")[0]
                             ClassVisitor cv = new SourceMethodClassVisitor(className, classWriter)
                             classReader.accept(cv, EXPAND_FRAMES)
+                            checkMethod(cv, classWriter)
                             byte[] code = classWriter.toByteArray()
                             jarOutputStream.write(code)
                         } else {
@@ -212,13 +213,13 @@ class JianTransform extends Transform {
 
     private void addParamsMethod(ClassWriter cw, String name) {
         org.objectweb.asm.MethodVisitor mw = cw.visitMethod(
-                ACC_PUBLIC, name, "(Ljava/lang/boolean;)V", null, null)
+                ACC_PUBLIC, name, "(Z)V", null, null)
         mw.visitVarInsn(ALOAD, 0)
         mw.visitVarInsn(ALOAD, 1)
-        mw.visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Ljava/lang/Object;)V")
+        mw.visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Ljava/lang/Object;Z)V")
         mw.visitVarInsn(ALOAD, 0)
         mw.visitVarInsn(ALOAD, 1)
-        mw.visitMethodInsn(INVOKESPECIAL, "android/support/v4/app/Fragment", name, "(Ljava/lang/boolean;)V", false)
+        mw.visitMethodInsn(INVOKESPECIAL, "android/support/v4/app/Fragment", name, "(Z)V", false)
         mw.visitInsn(RETURN)
         mw.visitMaxs(5, 5)
     }

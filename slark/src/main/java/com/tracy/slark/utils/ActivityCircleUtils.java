@@ -3,17 +3,20 @@ package com.tracy.slark.utils;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.UUID;
 
-final class ActivityCircleUtils {
+public final class ActivityCircleUtils {
     private static int activityCount = 0;
     private static UUID uuidForeground;
     private static long tsForegroundEntering;
     private static long tsOnActivityResumed;
+    private static final String TAG = "slark";
 
 
-    public static final void registMonitor(Application app) {
+    public static final void registerMonitor(Application app) {
+        Log.e(TAG, "action=register");
         app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -45,6 +48,7 @@ final class ActivityCircleUtils {
 
                     //过滤亮屏导致的生命周期快速切换事件，100ms以上才上报
                     if (delta > 100) {
+                        Log.e(TAG, "action=stay&activity=" + activity.getClass().getSimpleName() + "&delta=" + delta);
                     }
                 }
             }
@@ -61,6 +65,7 @@ final class ActivityCircleUtils {
 
                         //过滤亮屏导致的生命周期快速切换事件，大于400ms以上才上报
                         if (delta > 400) {
+                            Log.e(TAG, "action=quit&activity=" + activity.getClass().getSimpleName() + "&tsForegroundEntering=" + tsForegroundEntering);
                         }
                     }
                 }

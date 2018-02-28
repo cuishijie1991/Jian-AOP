@@ -38,7 +38,7 @@ dependencies {
 apply plugin: 'com.tracy.plugin'
 
 slark {
-    enabled false
+    enabled true
     debug true
     injectPackages =["com.tracy","com.tracy.jianaop"]
     track {
