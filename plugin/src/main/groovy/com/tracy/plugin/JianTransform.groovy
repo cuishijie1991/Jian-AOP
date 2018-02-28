@@ -81,17 +81,7 @@ class JianTransform extends Transform {
                                     def className = name.split(".class")[0]
                                     SourceMethodClassVisitor cv = new SourceMethodClassVisitor(className, classWriter)
                                     classReader.accept(cv, EXPAND_FRAMES)
-//                                    checkMethod(cv, classWriter);
-                                    if (cv.addMNames.size() > 0) {
-                                        for (int i = 0; i < cv.addMNames.size(); i++) {
-                                            System.out.println(cv.addMNames.get(i));
-                                            if (cv.addMNames.get(i).equals("onResume") || cv.addMNames.get(i).equals("onPause")) {
-                                                addNoParamsMethod(classWriter, cv.addMNames.get(i));
-                                            } else {
-                                                addParamsMethod(classWriter, cv.addMNames.get(i))
-                                            }
-                                        }
-                                    }
+                                    checkMethod(cv, classWriter);
                                     byte[] code = classWriter.toByteArray()
                                     FileOutputStream fos = new FileOutputStream(file.parentFile.absolutePath + File.separator + name)
                                     fos.write(code)
@@ -208,49 +198,45 @@ class JianTransform extends Transform {
         return entryName.endsWith(".class") && !entryName.contains("R\$") && !entryName.contains("R.class") && !entryName.contains("BuildConfig.class")
     }
 
+    private void checkMethod(SourceMethodClassVisitor cv, ClassWriter classWriter) {
+        if (cv.addMNames.size() > 0) {
+            for (int i = 0; i < cv.addMNames.size(); i++) {
+                System.out.println(cv.addMNames.get(i));
+                if (cv.addMNames.get(i).equals("onResume") || cv.addMNames.get(i).equals("onPause")) {
+                    addNoParamsMethod(classWriter, cv.addMNames.get(i));
+                } else {
+                    addParamsMethod(classWriter, cv.addMNames.get(i))
+                }
+            }
+        }
+    }
+
     private void addNoParamsMethod(ClassWriter cw, String name) {
-        // 创建一个 MethodWriter
         MethodVisitor mw = cw.visitMethod(
                 ACC_PUBLIC, name, "()V", null, null);
-//        mw.visitFieldInsn(
-//                GETSTATIC, "android/support/v4/app/Fragment", name, "()V");
-        // 推入 'this' 变量
         mw.visitVarInsn(ALOAD, 0);
-        //  创建父类的构造函数
-        mw.visitLdcInsn(true);
+        if (name.equals("onResume")) {
+            mw.visitLdcInsn(true);
+        } else {
+            mw.visitLdcInsn(false);
+        }
         mw.visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Ljava/lang/Object;Z)V");
         mw.visitVarInsn(ALOAD, 0);
         mw.visitMethodInsn(INVOKESPECIAL, "android/support/v4/app/Fragment", name, "()V", false);
-//        mw.visitInsn(RETURN);
-//        mw.visitFieldInsn(
-//                GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-        // pushes the "Hello World!" String constant
-//        mw.visitLdcInsn("Hello world!");
-//        // 调用System.out的'println' 函数
-//        mw.visitMethodInsn(
-//                INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V");
         mw.visitInsn(RETURN);
-        // 这段代码使用最多一个栈元素和一个本地变量
         mw.visitMaxs(5, 5);
     }
 
     private void addParamsMethod(ClassWriter cw, String name) {
         MethodVisitor mw = cw.visitMethod(
                 ACC_PUBLIC, name, "(Ljava/lang/boolean;)V", null, null);
-        // 使用System类的out成员类
-        mw.visitFieldInsn(
-                GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-        // pushes the "Hello World!" String constant
-        mw.visitLdcInsn("Hello world!");
-        // 调用System.out的'println' 函数
-        mw.visitMethodInsn(
-                INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V");
+        mw.visitVarInsn(ALOAD, 0);
+        mw.visitVarInsn(ALOAD, 1);
+        mw.visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "trackPageEvent", "(Ljava/lang/Object;)V");
         mw.visitVarInsn(ALOAD, 0);
         mw.visitVarInsn(ALOAD, 1);
         mw.visitMethodInsn(INVOKESPECIAL, "android/support/v4/app/Fragment", name, "(Ljava/lang/boolean;)V", false);
         mw.visitInsn(RETURN);
-        // 这段代码使用最多两个栈元素和两个本地变量
         mw.visitMaxs(5, 5);
     }
-
 }

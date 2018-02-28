@@ -21,4 +21,11 @@ public class ApplicationAdapter extends BaseMethodAdapter {
         visitLdcInsn(SlarkSettings.isDebug());
         visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "initConfig", "(Z)V", false);
     }
+
+    @Override
+    protected void onMethodExit(int opcode) {
+        super.onMethodExit(opcode);
+        visitVarInsn(ALOAD, 1);
+        visitMethodInsn(INVOKESTATIC, "com/tracy/slark/utils/ActivityCircleUtils", "registMonitor", "(Ljava/lang/Object;Z)V", false);
+    }
 }

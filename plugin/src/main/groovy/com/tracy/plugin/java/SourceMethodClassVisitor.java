@@ -4,7 +4,6 @@ package com.tracy.plugin.java;
 import com.tracy.plugin.SlarkSettings;
 import com.tracy.plugin.java.adviceAdapter.ClickAdviceAdapter;
 import com.tracy.plugin.java.adviceAdapter.PageAdviceAdapter;
-import com.tracy.plugin.java.adviceAdapter.TestVisitor;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
