@@ -19,6 +19,7 @@ import com.squareup.picasso.Picasso;
 import com.tracy.jianaop.R;
 import com.tracy.jianaop.data.DataHelper;
 import com.tracy.jianaop.data.ListItem;
+import com.tracy.slark.Slark;
 
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +88,13 @@ public class ListViewActivity extends Activity {
                 }
             });
             imageView.setOnClickListener(v -> Toast.makeText(mContext, "image is Clicked!", Toast.LENGTH_SHORT).show());
-            convertView.setOnClickListener(v -> Toast.makeText(mContext, "ListView " + listItem.name + " is Clicked!", Toast.LENGTH_SHORT).show());
+            convertView.setOnClickListener(v -> {
+                if (!Slark.hasEventConfig(v)) {
+                    Slark.showEventDialog(v);
+                    return;
+                }
+                Toast.makeText(mContext, "ListView " + listItem.name + " is Clicked!", Toast.LENGTH_SHORT).show();
+            });
             return convertView;
         }
     }
