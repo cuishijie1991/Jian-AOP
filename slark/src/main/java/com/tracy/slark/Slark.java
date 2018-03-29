@@ -60,7 +60,7 @@ public final class Slark {
         SlarkService.getInstance().addAction(new PageAction(pageRef, pageStart));
     }
 
-    public static final int VIEW_TAG = 0x0000ffff;
+    public static final int VIEW_TAG = 0xff000001;
 
     public static boolean hasEventConfig(View view) {
         if (view.getContext() != null) {
@@ -68,7 +68,7 @@ public final class Slark {
             if (configMap.containsKey(pageKey)) {
                 HashMap<String, String> pageMap = configMap.get(pageKey);
                 if (view.getTag(VIEW_TAG) == null) {
-                    view.setTag(TraceUtils.generateViewTree(view));
+                    view.setTag(VIEW_TAG, TraceUtils.generateViewTree(view));
                 }
                 String eventKey = (String) view.getTag(VIEW_TAG);
                 if (pageMap.containsKey(eventKey)) {
@@ -91,7 +91,7 @@ public final class Slark {
                     configMap.put(pageKey, pageMap);
                 }
                 if (view.getTag(VIEW_TAG) == null) {
-                    view.setTag(TraceUtils.generateViewTree(view));
+                    view.setTag(VIEW_TAG, TraceUtils.generateViewTree(view));
                 }
                 String eventKey = (String) view.getTag(VIEW_TAG);
                 String eventValue = pop.getEventId();
