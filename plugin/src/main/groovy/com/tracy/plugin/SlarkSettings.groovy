@@ -6,6 +6,7 @@ class SlarkSettings {
     static class SlarkOptions {
         def enabled = true
         boolean debug
+        boolean mode
         List<String> injectPackages = []
     }
 
@@ -20,6 +21,10 @@ class SlarkSettings {
         this.project = project
         project.extensions.create("slark", SlarkOptions)
         project.slark.extensions.create("track", TrackOptions)
+    }
+
+    static boolean isConfigMode() {
+        return project.slark.mode
     }
 
     static boolean isEnabled() {

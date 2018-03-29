@@ -40,6 +40,7 @@ apply plugin: 'com.tracy.plugin'
 slark {
     enabled true
     debug true
+    mode true
     injectPackages =["com.tracy","com.tracy.jianaop"]
     track {
         click true

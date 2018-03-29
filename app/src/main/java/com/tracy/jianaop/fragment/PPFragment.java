@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tracy.jianaop.R;
+import com.tracy.slark.Slark;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +37,11 @@ public class PPFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        View view = new View(getContext());
+        if (!Slark.hasEventConfig(view)) {
+            Slark.showEventDialog(view);
+            return;
+        }
     }
 
     @Nullable

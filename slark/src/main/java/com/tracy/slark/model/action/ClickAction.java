@@ -38,7 +38,7 @@ public class ClickAction implements IAction {
         Context context = view.getContext();
         this.actPage = context.getClass().getSimpleName();
         this.viewId = findViewById(context, view.getId());
-        this.viewPath = TraceUtils.getPath(view);
+        this.viewPath = TraceUtils.generateViewTree(view);
         if (view instanceof TextView) {
             text = ((TextView) view).getText().toString();
         } else {
