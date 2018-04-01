@@ -7,13 +7,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="请编辑EventID"/>
+        android:text="请编辑EventID" />
 
     <EditText
         android:id="@+id/et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="id"/>
+        android:hint="id" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,16 +23,23 @@
         <Button
             android:id="@+id/btn_ok"
             android:layout_width="wrap_content"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="确定"/>
+            android:layout_weight="1"
+            android:text="保存" />
 
         <Button
-            android:id="@+id/btn_cancle"
+            android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="取消"/>
+            android:layout_weight="1"
+            android:text="取消" />
+
+        <Button
+            android:id="@+id/btn_ignore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="忽略" />
 
     </LinearLayout>
 </LinearLayout>

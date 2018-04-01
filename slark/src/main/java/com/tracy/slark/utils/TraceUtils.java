@@ -1,6 +1,5 @@
 package com.tracy.slark.utils;
 
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -16,7 +15,10 @@ public class TraceUtils {
             view = (View) view.getParent();
             sb.append(view.getClass().getSimpleName()).append("/");
         }
-        Log.e("TraceUtils", sb.toString());
         return sb.toString();
+    }
+
+    public static String generateIgnoreViewId(String pageId, String eventId) {
+        return pageId + "$" + eventId;
     }
 }

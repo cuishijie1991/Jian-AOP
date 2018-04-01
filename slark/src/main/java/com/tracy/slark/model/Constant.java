@@ -7,6 +7,4 @@ package com.tracy.slark.model;
 public class Constant {
 
     public static final String UNKNOWN = "unknown";
-
-    public static boolean isDebug = false;
 }

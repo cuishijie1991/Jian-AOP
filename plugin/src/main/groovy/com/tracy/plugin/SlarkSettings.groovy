@@ -5,8 +5,7 @@ import org.gradle.api.Project
 class SlarkSettings {
     static class SlarkOptions {
         def enabled = true
-        boolean debug
-        boolean mode
+        def configMode = false
         List<String> injectPackages = []
     }
 
@@ -24,15 +23,11 @@ class SlarkSettings {
     }
 
     static boolean isConfigMode() {
-        return project.slark.mode
+        return project.slark.configMode
     }
 
     static boolean isEnabled() {
         return project.slark.enabled
-    }
-
-    static boolean isDebug() {
-        return project.slark.debug
     }
 
     static List<String> getInjectPackages() {

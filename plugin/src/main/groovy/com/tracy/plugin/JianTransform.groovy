@@ -33,6 +33,7 @@ import static org.objectweb.asm.Opcodes.INVOKESTATIC
 import static org.objectweb.asm.Opcodes.RETURN
 
 class JianTransform extends Transform {
+    static final String SLARK_PKG = "com.tracy.slark"
     Project project
 
     JianTransform(Project project) {
@@ -172,6 +173,9 @@ class JianTransform extends Transform {
     }
 
     private boolean isClassShouldInject(String entryName, List<String> injectPackages) {
+        if (entryName.contains(SLARK_PKG)) {
+            return false
+        }
         if (injectPackages.isEmpty())
             return true
         for (String packageName : injectPackages) {

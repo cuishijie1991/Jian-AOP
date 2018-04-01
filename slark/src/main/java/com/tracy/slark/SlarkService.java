@@ -5,10 +5,7 @@ import android.os.HandlerThread;
 
 import com.tracy.slark.model.ILogCollector;
 import com.tracy.slark.model.task.AddActionTask;
-import com.tracy.slark.model.task.DebugTask;
 import com.tracy.slark.model.action.IAction;
-import com.tracy.slark.model.Constant;
-
 /**
  * Created by cuishijie on 2018/1/28.
  */
@@ -34,9 +31,6 @@ public class SlarkService {
 
     public void addAction(IAction action) {
         H.post(new AddActionTask(mCollector, action));
-        if (Constant.isDebug) {
-            H.post(new DebugTask(action));
-        }
     }
 
     public void setLogCollector(ILogCollector collector) {

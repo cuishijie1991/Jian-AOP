@@ -1,6 +1,5 @@
 package com.tracy.plugin.visitor.adapter;
 
-import com.tracy.plugin.SlarkSettings;
 import com.tracy.plugin.visitor.InjectMethod;
 import com.tracy.plugin.visitor.InjectPage;
 
@@ -18,8 +17,6 @@ public class ApplicationAdapter extends BaseMethodAdapter {
     @Override
     protected void onMethodEnter() {
         super.onMethodEnter();
-        visitLdcInsn(SlarkSettings.isDebug());
-        visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "setDebug", "(Z)V", false);
         visitVarInsn(ALOAD, 0);
         visitMethodInsn(INVOKESTATIC, "com/tracy/slark/utils/ActivityCircleUtils", "registerMonitor", "(Landroid/app/Application;)V", false);
     }
