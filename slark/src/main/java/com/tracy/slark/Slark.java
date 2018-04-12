@@ -11,9 +11,13 @@ import com.tracy.slark.model.action.PageAction;
 import com.tracy.slark.utils.TraceUtils;
 import com.tracy.slark.view.EventPopup;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by cuishijie on 2018/1/28.
@@ -48,7 +52,7 @@ public final class Slark {
 
     /**
      * @param pageRef   this (Activity or Fragment)
-     * @param pageStart
+     * @param pageStart 进入/退出页面
      * @pluginInject
      */
     public final static void trackPageEvent(Object pageRef, boolean pageStart) {
@@ -118,5 +122,28 @@ public final class Slark {
             });
             popup.show();
         }
+    }
+
+    public static String saveConfig() {
+        JSONObject object;
+        try {
+            object = new JSONObject();
+            Set<Map.Entry<String, HashMap<String, String>>> entries = configMap.entrySet();
+            for (Map.Entry<String, HashMap<String, String>> entry : entries) {
+                String key = entry.getKey();
+                HashMap<String, String> map = entry.getValue();
+                JSONObject objectPage = new JSONObject();
+                for (Map.Entry<String, String> entry1 : map.entrySet()) {
+                    String pageKey = entry1.getKey();
+                    String pageValue = entry1.getValue();
+                    objectPage.put(pageKey, pageValue);
+                }
+                object.put(key, objectPage);
+            }
+            return object.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

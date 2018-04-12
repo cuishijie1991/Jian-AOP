@@ -68,16 +68,16 @@ public class ConfigController {
         try {
             if (config != null) {
                 //TODO
-//                JSONArray configJA = new JSONArray(config);
-//                if (configJA != null && configJA.length() > 0) {
-//                    for (int i = 0; i < configJA.length(); i++) {
-////                        String key = configJA.optJSONArray()
-//                        String ignoreId = configJA.optString(i);
-//                        if (ignoreId != null) {
-//                            Slark.ignoreList.add(ignoreId);
-//                        }
-//                    }
-//                }
+                JSONArray configJA = new JSONArray(config);
+                if (configJA != null && configJA.length() > 0) {
+                    for (int i = 0; i < configJA.length(); i++) {
+//                        String key = configJA.optJSONArray()
+                        String ignoreId = configJA.optString(i);
+                        if (ignoreId != null) {
+                            Slark.ignoreList.add(ignoreId);
+                        }
+                    }
+                }
             }
             if (ignore != null) {
                 JSONArray ignoreJA = new JSONArray(ignore);

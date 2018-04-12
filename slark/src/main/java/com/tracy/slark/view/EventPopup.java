@@ -1,13 +1,18 @@
 package com.tracy.slark.view;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import com.tracy.slark.R;
+import com.tracy.slark.Slark;
+import com.tracy.slark.network.Network;
 
 
 /**
@@ -30,7 +35,7 @@ public class EventPopup extends PopupWindow {
     }
 
     public void show() {
-        showAsDropDown(mAnchorView);
+        showAtLocation(mAnchorView, Gravity.CENTER, 0, 0);
     }
 
     public String getEventId() {
@@ -48,12 +53,29 @@ public class EventPopup extends PopupWindow {
         et = contentView.findViewById(R.id.et);
         Button buttonOK = contentView.findViewById(R.id.btn_ok);
         buttonOK.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(getEventId())) {
+                Toast.makeText(mContext, "ID不能为空", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (listener != null) {
                 listener.onConfirm(EventPopup.this);
             }
             dismiss();
         });
         Button buttonCancel = contentView.findViewById(R.id.btn_cancel);
+        Button upload = contentView.findViewById(R.id.btn_upload);
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(Slark.saveConfig())) {
+                    Network.getInstance().sendRequestWithHttpURLConnection(mContext, Network.POST, Slark.saveConfig());
+                    Toast.makeText(mContext, "Upload Success", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(mContext, "config is null", Toast.LENGTH_SHORT).show();
+                }
+                dismiss();
+            }
+        });
         buttonCancel.setOnClickListener(v -> dismiss());
         Button buttonIgnore = contentView.findViewById(R.id.btn_ignore);
         buttonIgnore.setOnClickListener(v -> {

@@ -49,10 +49,10 @@ public class ClickAdapter extends BaseMethodAdapter {
 
     private void hookConfigCode(int i) {
         Label label = new Label();
-        visitVarInsn(ALOAD, 1);
+        visitVarInsn(ALOAD, i);
         visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "hasEventConfig", "(Landroid/view/View;)Z", false);
         visitJumpInsn(IFNE, label);
-        visitVarInsn(ALOAD, 1);
+        visitVarInsn(ALOAD, i);
         visitMethodInsn(INVOKESTATIC, "com/tracy/slark/Slark", "showEventDialog", "(Landroid/view/View;)V", false);
         visitInsn(RETURN);
         visitLabel(label);

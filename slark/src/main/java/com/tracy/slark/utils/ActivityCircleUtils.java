@@ -5,6 +5,8 @@ import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.tracy.slark.network.Network;
+
 import java.util.UUID;
 
 public final class ActivityCircleUtils {
@@ -16,6 +18,7 @@ public final class ActivityCircleUtils {
 
 
     public static final void registerMonitor(Application app) {
+        Network.getInstance().sendRequestWithHttpURLConnection(app.getBaseContext(), Network.GET, "");
         Log.e(TAG, "action=register");
         app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override

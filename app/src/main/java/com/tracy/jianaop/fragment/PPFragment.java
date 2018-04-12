@@ -37,11 +37,6 @@ public class PPFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        View view = new View(getContext());
-        if (!Slark.hasEventConfig(view)) {
-            Slark.showEventDialog(view);
-            return;
-        }
     }
 
     @Nullable
@@ -51,7 +46,7 @@ public class PPFragment extends Fragment {
         view.findViewById(R.id.tv_fragment).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.currentTimeMillis();
+
             }
         });
         return view;

@@ -4,8 +4,11 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tracy.slark.utils.ConfigUtils;
 import com.tracy.slark.utils.ResUtils;
 import com.tracy.slark.utils.TraceUtils;
+
+import java.util.HashMap;
 
 import static com.tracy.slark.model.Constant.UNKNOWN;
 
@@ -25,6 +28,8 @@ public class ClickAction implements IAction {
 
     public long actTime;
 
+    private Context mContext;
+
     public ClickAction(String viewId, String viewPath, String actPage, String text, long actTime) {
         this.viewId = viewId;
         this.viewPath = viewPath;
@@ -35,9 +40,9 @@ public class ClickAction implements IAction {
 
     public ClickAction(View view) {
         this.actTime = System.currentTimeMillis();
-        Context context = view.getContext();
-        this.actPage = context.getClass().getSimpleName();
-        this.viewId = findViewById(context, view.getId());
+        mContext = view.getContext();
+        this.actPage = mContext.getClass().getSimpleName();
+        this.viewId = findViewById(mContext, view.getId());
         this.viewPath = TraceUtils.generateViewTree(view);
         if (view instanceof TextView) {
             text = ((TextView) view).getText().toString();
@@ -61,13 +66,20 @@ public class ClickAction implements IAction {
 
     @Override
     public String toActString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("viewId=").append(this.viewId)
-                .append("&actPage=").append(this.actPage)
-                .append("&viewPath=").append(this.viewPath)
-                .append("&text=").append(this.text)
-                .append("&actTime=").append(this.actTime);
-        return sb.toString();
+        ConfigUtils configUtils = new ConfigUtils(mContext);
+        if (configUtils.getConfig().containsKey(actPage)) {
+            HashMap<String, String> map = configUtils.getConfig().get(actPage);
+            if (map.containsKey(viewPath)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("viewId=").append(this.viewId)
+                        .append("&actPage=").append(this.actPage)
+                        .append("&viewPath=").append(this.viewPath)
+                        .append("&text=").append(this.text)
+                        .append("&actTime=").append(this.actTime);
+                return sb.toString();
+            }
+        }
+        return "no trace click";
     }
 
     @Override
