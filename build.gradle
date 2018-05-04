@@ -9,22 +9,29 @@ buildscript {
             // modify this line to locate to your local repo of the testplugin
             url uri('repo')
         }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'com.tracy.plugin:plugin:1.1.0'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
+    allprojects {
+        repositories {
+            jcenter()
+            mavenCentral()
+            maven {
+                url "https://dl.google.com/dl/android/maven2/"
+            }
+            maven {
+                url "http://guazi.tech:8081/nexus/content/groups/public"
+            }
+        }
     }
-}
 
 task clean(type: Delete) {
     delete rootProject.buildDir

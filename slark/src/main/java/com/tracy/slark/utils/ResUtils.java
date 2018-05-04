@@ -1,6 +1,6 @@
 package com.tracy.slark.utils;
 
-import com.tracy.slark.model.Constant;
+import com.tracy.slark.controller.Constant;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

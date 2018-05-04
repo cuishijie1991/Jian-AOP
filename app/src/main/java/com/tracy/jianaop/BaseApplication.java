@@ -15,6 +15,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Log.e("###", "application init!");
+        Slark.init(this);
         Slark.setLogCollector(new MLogCollector());
     }
 }

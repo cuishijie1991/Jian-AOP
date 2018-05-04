@@ -12,7 +12,9 @@ import android.widget.Toast;
 
 import com.tracy.slark.R;
 import com.tracy.slark.Slark;
-import com.tracy.slark.network.Network;
+import com.tracy.slark.SlarkService;
+import com.tracy.slark.controller.action.PostConfigAction;
+import com.tracy.slark.utils.SlarkUtil;
 
 
 /**
@@ -64,17 +66,14 @@ public class EventPopup extends PopupWindow {
         });
         Button buttonCancel = contentView.findViewById(R.id.btn_cancel);
         Button upload = contentView.findViewById(R.id.btn_upload);
-        upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!TextUtils.isEmpty(Slark.saveConfig())) {
-                    Network.getInstance().sendRequestWithHttpURLConnection(mContext, Network.POST, Slark.saveConfig());
-                    Toast.makeText(mContext, "Upload Success", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(mContext, "config is null", Toast.LENGTH_SHORT).show();
-                }
-                dismiss();
+        upload.setOnClickListener(view -> {
+            if (!Slark.configMap.isEmpty()) {
+                SlarkService.getInstance().addAction(new PostConfigAction(SlarkUtil.toJsonString(Slark.configMap)));
+                Toast.makeText(mContext, "Upload Success", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext, "config is null", Toast.LENGTH_SHORT).show();
             }
+            dismiss();
         });
         buttonCancel.setOnClickListener(v -> dismiss());
         Button buttonIgnore = contentView.findViewById(R.id.btn_ignore);

@@ -1,4 +1,4 @@
-package com.tracy.slark.model.action;
+package com.tracy.slark.controller.action;
 
 import android.content.Context;
 import android.os.Build;

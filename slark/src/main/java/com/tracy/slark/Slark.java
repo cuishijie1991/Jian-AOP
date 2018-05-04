@@ -1,23 +1,27 @@
 package com.tracy.slark;
 
+import android.app.Application;
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.tracy.slark.model.ILogCollector;
-import com.tracy.slark.model.action.ClickAction;
-import com.tracy.slark.model.action.PageAction;
+import com.tracy.slark.controller.ILogCollector;
+import com.tracy.slark.controller.action.ClickAction;
+import com.tracy.slark.controller.action.GetConfigAction;
+import com.tracy.slark.controller.action.PageAction;
+import com.tracy.slark.controller.model.EventConfig;
+import com.tracy.slark.utils.DBUtil;
+import com.tracy.slark.utils.PreferenceUtil;
 import com.tracy.slark.utils.TraceUtils;
 import com.tracy.slark.view.EventPopup;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import tech.guazi.component.network.PhoneInfoHelper;
 
 /**
  * Created by cuishijie on 2018/1/28.
@@ -25,7 +29,8 @@ import java.util.Set;
 
 public final class Slark {
 
-    public static final HashMap<String, HashMap<String, String>> configMap = new HashMap<>();
+    public static final int VIEW_TAG = 0xff000001;
+    public static final HashMap<String, List<EventConfig>> configMap = new HashMap<>();
     public static final List<String> ignoreList = new ArrayList<>();
 
     /**
@@ -34,7 +39,14 @@ public final class Slark {
      * @param collector
      */
     public final static void setLogCollector(ILogCollector collector) {
-        SlarkService.getInstance().setLogCollector(collector);
+        SlarkService.getInstance().addLogCollector(collector);
+    }
+
+    public final static void init(Application context) {
+        PreferenceUtil.getInstance().init(context);
+        DBUtil.getInstance().init(context);
+        PhoneInfoHelper.init(context);
+        SlarkService.getInstance().addAction(new GetConfigAction());
     }
 
     /**
@@ -59,8 +71,6 @@ public final class Slark {
         SlarkService.getInstance().addAction(new PageAction(pageRef, pageStart));
     }
 
-    public static final int VIEW_TAG = 0xff000001;
-
     public final static boolean hasEventConfig(View view) {
         if (view.getContext() != null) {
             String pageKey = view.getContext().getClass().getSimpleName();
@@ -69,10 +79,11 @@ public final class Slark {
             }
             String eventKey = (String) view.getTag(VIEW_TAG);
             if (configMap.containsKey(pageKey)) {
-                HashMap<String, String> pageMap = configMap.get(pageKey);
-                if (pageMap.containsKey(eventKey)) {
-                    Toast.makeText(view.getContext(), pageMap.get(eventKey), Toast.LENGTH_SHORT).show();
-                    return true;
+                List<EventConfig> pageEvents = configMap.get(pageKey);
+                for (EventConfig event : pageEvents) {
+                    if (eventKey.equals(event.path)) {
+                        return true;
+                    }
                 }
             }
             if (ignoreList.contains(TraceUtils.generateIgnoreViewId(pageKey, eventKey))) {
@@ -94,19 +105,20 @@ public final class Slark {
                         return;
                     }
                     String pageKey = view.getContext().getClass().getSimpleName();
-                    HashMap<String, String> pageMap;
+                    List<EventConfig> pageEvents;
                     if (configMap.containsKey(pageKey)) {
-                        pageMap = configMap.get(pageKey);
+                        pageEvents = configMap.get(pageKey);
                     } else {
-                        pageMap = new HashMap<>();
-                        configMap.put(pageKey, pageMap);
+                        pageEvents = new ArrayList<>();
+                        configMap.put(pageKey, pageEvents);
                     }
                     if (view.getTag(VIEW_TAG) == null) {
                         view.setTag(VIEW_TAG, TraceUtils.generateViewTree(view));
                     }
                     String eventKey = (String) view.getTag(VIEW_TAG);
-                    pageMap.put(eventKey, eventValue);
-                    Log.e("SlarkEventConfig", "Save => pageKey = " + pageKey + " | eventKey = " + eventKey + " | eventValue = " + eventValue);
+                    EventConfig event = new EventConfig(pageKey, eventKey, eventValue);
+                    pageEvents.add(event);
+                    Log.e("SlarkEventConfig", "Save => " + event.toString());
                 }
 
                 @Override
@@ -122,28 +134,5 @@ public final class Slark {
             });
             popup.show();
         }
-    }
-
-    public static String saveConfig() {
-        JSONObject object;
-        try {
-            object = new JSONObject();
-            Set<Map.Entry<String, HashMap<String, String>>> entries = configMap.entrySet();
-            for (Map.Entry<String, HashMap<String, String>> entry : entries) {
-                String key = entry.getKey();
-                HashMap<String, String> map = entry.getValue();
-                JSONObject objectPage = new JSONObject();
-                for (Map.Entry<String, String> entry1 : map.entrySet()) {
-                    String pageKey = entry1.getKey();
-                    String pageValue = entry1.getValue();
-                    objectPage.put(pageKey, pageValue);
-                }
-                object.put(key, objectPage);
-            }
-            return object.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 }
